@@ -21,4 +21,5 @@ export const GIFT_PACKAGES = [
   { stars: 15, votes: 35, id: 'pkg-2' }
 ];
 
-export const TARGET_DATE = new Date('2025-06-01T00:00:00Z').getTime();
+// Dynamically set countdown to 4 days from now for live effect
+export const TARGET_DATE = Date.now() + (4 * 24 * 60 * 60 * 1000);
