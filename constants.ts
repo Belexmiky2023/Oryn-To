@@ -21,5 +21,14 @@ export const GIFT_PACKAGES = [
   { stars: 15, votes: 35, id: 'pkg-2' }
 ];
 
-// Dynamically set countdown to 4 days from now for live effect
-export const TARGET_DATE = Date.now() + (4 * 24 * 60 * 60 * 1000);
+// Persistent 4-day target date
+const getPersistentTarget = () => {
+  const stored = localStorage.getItem('oryn_target_date');
+  if (stored) return parseInt(stored);
+  
+  const target = Date.now() + (4 * 24 * 60 * 60 * 1000);
+  localStorage.setItem('oryn_target_date', target.toString());
+  return target;
+};
+
+export const TARGET_DATE = getPersistentTarget();

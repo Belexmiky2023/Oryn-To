@@ -83,17 +83,17 @@ const Home: React.FC = () => {
                 <div className="text-[#39FF14] font-bold tracking-[0.5em] uppercase text-sm mb-2">Grand Champion Tier</div>
                 <h4 className="text-6xl font-raj font-bold text-white mb-8 tracking-tighter uppercase">1ST PLACE</h4>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-lg font-raj text-gray-300 w-full px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg font-raj text-gray-300 w-full px-4">
                   {[
                     "25 Telegram Stars",
                     "AE & AM Private Assets",
                     "75+ Motion PFPs",
                     "Premium Editing Pack",
                     "VIP Server Status",
-                    "Featured on Home"
+                    "Exclusive Role"
                   ].map((prize, idx) => (
                     <div key={idx} className="flex justify-between items-center border-b border-white/5 pb-2 hover:text-[#39FF14] transition-colors">
-                      <span>{prize}</span>
+                      <span className="text-left">{prize}</span>
                       <span className="text-[#39FF14] font-bold">✓</span>
                     </div>
                   ))}
@@ -108,11 +108,11 @@ const Home: React.FC = () => {
                 <h5 className="text-2xl font-raj font-bold text-white mb-6 uppercase tracking-tight">Silver Competitor</h5>
                 <ul className="space-y-4 text-gray-400 font-raj text-lg">
                   <li className="flex items-center space-x-3">
-                    <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
                     <span>75+ Premium PFPs</span>
                   </li>
                   <li className="flex items-center space-x-3">
-                    <div className="w-2 h-2 rounded-full bg-gray-500"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
                     <span>Premium Editing Pack</span>
                   </li>
                 </ul>
@@ -123,12 +123,12 @@ const Home: React.FC = () => {
                 <h5 className="text-2xl font-raj font-bold text-white mb-6 uppercase tracking-tight">Bronze Competitor</h5>
                 <ul className="space-y-4 text-gray-400 font-raj text-lg">
                   <li className="flex items-center space-x-3">
-                    <div className="w-2 h-2 rounded-full bg-orange-700"></div>
+                    <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
                     <span>Full Editing Pack</span>
                   </li>
                   <li className="flex items-center space-x-3 opacity-50">
                     <div className="w-2 h-2 rounded-full bg-gray-600"></div>
-                    <span>Silver Rank Role</span>
+                    <span>Bronze Participant Role</span>
                   </li>
                 </ul>
               </div>
@@ -165,7 +165,6 @@ const Home: React.FC = () => {
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-600 italic">Leaderboard values are calculated from verified vote submissions.</p>
         </div>
 
         {/* Rules Section */}
