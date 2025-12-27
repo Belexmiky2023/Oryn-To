@@ -22,7 +22,7 @@ const Home: React.FC = () => {
             2025 Global Edition • Live
           </div>
           <h1 className="text-6xl md:text-9xl font-bold font-raj tracking-tighter text-white leading-tight">
-            ARYAN <span className="text-[#39FF14] neon-glow">CUP</span>
+            ORYN <span className="text-[#39FF14] neon-glow">CUP</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 font-light max-w-2xl mx-auto">
             The ultimate battleground for elite video editors. Witness pure motion artistry.
