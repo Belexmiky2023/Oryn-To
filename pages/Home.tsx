@@ -70,7 +70,7 @@ const Home: React.FC = () => {
             <div className="glass-morphism p-12 rounded-[2.5rem] border-2 border-[#39FF14]/40 relative group overflow-hidden max-w-3xl mx-auto transform transition-all hover:scale-[1.02]">
               <div className="absolute inset-0 bg-gradient-to-br from-[#39FF14]/10 to-transparent"></div>
               <div className="relative z-10 flex flex-col items-center">
-                {/* Diamond Icon Centered */}
+                {/* Centered Diamond Icon */}
                 <div className="w-32 h-32 mb-8 flex items-center justify-center relative">
                   <div className="absolute inset-0 bg-[#39FF14] blur-[40px] opacity-50 animate-pulse"></div>
                   <svg className="w-20 h-20 text-[#39FF14] filter drop-shadow-[0_0_15px_#39FF14]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -86,11 +86,11 @@ const Home: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg font-raj text-gray-300 w-full px-4">
                   {[
                     "25 Telegram Stars",
-                    "AE & AM Private Assets",
-                    "75+ Motion PFPs",
+                    "AE and AM Stuff",
+                    "75+ Pfps",
                     "Premium Editing Pack",
-                    "VIP Server Status",
-                    "Exclusive Role"
+                    "VIP Server Role",
+                    "Exclusive Channel Access"
                   ].map((prize, idx) => (
                     <div key={idx} className="flex justify-between items-center border-b border-white/5 pb-2 hover:text-[#39FF14] transition-colors">
                       <span className="text-left">{prize}</span>
@@ -109,11 +109,11 @@ const Home: React.FC = () => {
                 <ul className="space-y-4 text-gray-400 font-raj text-lg">
                   <li className="flex items-center space-x-3">
                     <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
-                    <span>75+ Premium PFPs</span>
+                    <span>75+ pfp</span>
                   </li>
                   <li className="flex items-center space-x-3">
                     <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
-                    <span>Premium Editing Pack</span>
+                    <span>Premium EDITING Pack</span>
                   </li>
                 </ul>
               </div>
@@ -124,11 +124,11 @@ const Home: React.FC = () => {
                 <ul className="space-y-4 text-gray-400 font-raj text-lg">
                   <li className="flex items-center space-x-3">
                     <div className="w-2 h-2 rounded-full bg-[#39FF14]"></div>
-                    <span>Full Editing Pack</span>
+                    <span>Editing Pack</span>
                   </li>
                   <li className="flex items-center space-x-3 opacity-50">
                     <div className="w-2 h-2 rounded-full bg-gray-600"></div>
-                    <span>Bronze Participant Role</span>
+                    <span>Certificate of Honor</span>
                   </li>
                 </ul>
               </div>
@@ -142,7 +142,7 @@ const Home: React.FC = () => {
             <h3 className="text-3xl font-raj font-bold uppercase tracking-tight">Live <span className="text-[#39FF14]">Standings</span></h3>
             <span className="text-[10px] text-[#39FF14] font-bold uppercase tracking-widest animate-pulse">Updated Real-Time</span>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 text-left">
             {[
               { rank: 1, name: 'Ghost Vfx', score: 210, trend: 'up' },
               { rank: 2, name: 'Zade FX', score: 124, trend: 'steady' },
