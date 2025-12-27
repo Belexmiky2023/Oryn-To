@@ -13,7 +13,9 @@ const Countdown: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const distance = TARGET_DATE - now;
+      // Fix: TARGET_DATE is exported as a function reference in constants.ts to ensure runtime safety. 
+      // It must be called to retrieve the actual timestamp value.
+      const distance = TARGET_DATE() - now;
 
       if (distance < 0) {
         clearInterval(timer);

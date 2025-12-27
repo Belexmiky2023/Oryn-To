@@ -21,15 +21,36 @@ export const GIFT_PACKAGES = [
   { stars: 15, votes: 35, id: 'pkg-2' }
 ];
 
-// Persistent 4-day target date from the moment the app is first visited
-const getPersistentTarget = () => {
-  const stored = localStorage.getItem('oryn_target_date_v2');
-  if (stored) return parseInt(stored);
+/**
+ * Safely retrieves or initializes the persistent 4-day target date.
+ * Deferring this to a function prevents crashes during module initialization 
+ * in environments where localStorage is not available (SSR, Cloudflare Pages).
+ */
+export const getTargetDate = (): number => {
+  const FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
   
-  // Set to 4 days from "now"
-  const target = Date.now() + (4 * 24 * 60 * 60 * 1000);
-  localStorage.setItem('oryn_target_date_v2', target.toString());
-  return target;
+  if (typeof window === 'undefined') {
+    return Date.now() + FOUR_DAYS_MS;
+  }
+  
+  try {
+    const stored = localStorage.getItem('oryn_target_date_v2');
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      return isNaN(parsed) ? (Date.now() + FOUR_DAYS_MS) : parsed;
+    }
+    
+    const target = Date.now() + FOUR_DAYS_MS;
+    localStorage.setItem('oryn_target_date_v2', target.toString());
+    return target;
+  } catch (error) {
+    // Fallback for private browsing or disabled storage
+    return Date.now() + FOUR_DAYS_MS;
+  }
 };
 
-export const TARGET_DATE = getPersistentTarget();
+/**
+ * Replaced precomputed constant with a getter function reference to satisfy 
+ * runtime safety requirements and module-load constraints.
+ */
+export const TARGET_DATE = getTargetDate;
