@@ -1,5 +1,5 @@
 
-export const GOOGLE_CLIENT_ID = '59155216254-otj0vd8mqfrta4acmchaptbglcifhhcs.apps.googleusercontent.com';
+export const MAGIC_PUBLISHABLE_KEY = 'pk_live_D4990A2E8056087E'; // Replace with your actual key from Magic Dashboard
 
 export const COLORS = {
   neonGreen: '#39FF14',
@@ -21,17 +21,9 @@ export const GIFT_PACKAGES = [
   { stars: 15, votes: 35, id: 'pkg-2' }
 ];
 
-/**
- * Safely retrieves or initializes the persistent 4-day target date.
- * Deferring this to a function prevents crashes during module initialization 
- * in environments where localStorage is not available (SSR, Cloudflare Pages).
- */
 export const getTargetDate = (): number => {
   const FOUR_DAYS_MS = 4 * 24 * 60 * 60 * 1000;
-  
-  if (typeof window === 'undefined') {
-    return Date.now() + FOUR_DAYS_MS;
-  }
+  if (typeof window === 'undefined') return Date.now() + FOUR_DAYS_MS;
   
   try {
     const stored = localStorage.getItem('oryn_target_date_v2');
@@ -39,18 +31,12 @@ export const getTargetDate = (): number => {
       const parsed = parseInt(stored, 10);
       return isNaN(parsed) ? (Date.now() + FOUR_DAYS_MS) : parsed;
     }
-    
     const target = Date.now() + FOUR_DAYS_MS;
     localStorage.setItem('oryn_target_date_v2', target.toString());
     return target;
   } catch (error) {
-    // Fallback for private browsing or disabled storage
     return Date.now() + FOUR_DAYS_MS;
   }
 };
 
-/**
- * Replaced precomputed constant with a getter function reference to satisfy 
- * runtime safety requirements and module-load constraints.
- */
 export const TARGET_DATE = getTargetDate;

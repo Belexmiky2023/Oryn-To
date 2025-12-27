@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react"
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Magic } from "magic-sdk"
 
 import Navbar from "./components/Navbar"
 import Home from "./pages/Home"
@@ -9,33 +10,69 @@ import Gift from "./pages/Gift"
 import Rate from "./pages/Rate"
 import Admin from "./pages/Admin"
 
-import { ROUTES } from "./constants"
+import { ROUTES, MAGIC_PUBLISHABLE_KEY } from "./constants"
 import { User } from "./types"
 import { db } from "./db"
+
+// Singleton Magic instance
+const magic = new Magic(MAGIC_PUBLISHABLE_KEY);
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem("oryn_current_user")
-    if (stored) setUser(JSON.parse(stored))
-    setReady(true)
-  }, [])
+    const checkLoginStatus = async () => {
+      try {
+        const isLoggedIn = await magic.user.isLoggedIn();
+        if (isLoggedIn) {
+          const metadata = await magic.user.getMetadata();
+          const email = metadata.email!;
+          const existingUsers = db.getUsers();
+          let foundUser = existingUsers.find(u => u.email === email);
 
-  const handleLogin = (credential: string) => {
+          if (!foundUser) {
+            foundUser = {
+              id: metadata.publicAddress!,
+              email: email,
+              name: email.split('@')[0], // Use email prefix as name
+              picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`, // Deterministic avatar
+              role: email === 'oryn179@gmail.com' || email.includes('admin') ? 'admin' : 'user',
+              createdAt: Date.now(),
+            };
+            db.saveUsers([...existingUsers, foundUser]);
+          }
+          setUser(foundUser);
+        } else {
+          // Clear local cache if magic session expired
+          localStorage.removeItem("oryn_current_user");
+        }
+      } catch (err) {
+        console.error("Auth check failed", err);
+      } finally {
+        setReady(true);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  const handleLogin = async (email: string) => {
     try {
-      const payload = JSON.parse(atob(credential.split('.')[1]));
+      await magic.auth.loginWithMagicLink({ email });
+      const metadata = await magic.user.getMetadata();
+      const userEmail = metadata.email!;
+      
       const existingUsers = db.getUsers();
-      let foundUser = existingUsers.find(u => u.email === payload.email);
+      let foundUser = existingUsers.find(u => u.email === userEmail);
 
       if (!foundUser) {
         foundUser = {
-          id: payload.sub,
-          email: payload.email,
-          name: payload.name,
-          picture: payload.picture,
-          role: payload.email === 'oryn179@gmail.com' || payload.email.includes('admin') ? 'admin' : 'user',
+          id: metadata.publicAddress!,
+          email: userEmail,
+          name: userEmail.split('@')[0],
+          picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail}`,
+          role: userEmail === 'oryn179@gmail.com' || userEmail.includes('admin') ? 'admin' : 'user',
           createdAt: Date.now(),
         };
         db.saveUsers([...existingUsers, foundUser]);
@@ -44,13 +81,19 @@ export default function App() {
       setUser(foundUser);
       localStorage.setItem('oryn_current_user', JSON.stringify(foundUser));
     } catch (e) {
-      console.error("Login failed", e);
+      console.error("Magic login failed", e);
+      throw e;
     }
   };
 
-  const handleLogout = () => {
-    setUser(null)
-    localStorage.removeItem("oryn_current_user")
+  const handleLogout = async () => {
+    try {
+      await magic.user.logout();
+      setUser(null);
+      localStorage.removeItem("oryn_current_user");
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
   };
 
   if (!ready) {
@@ -58,7 +101,7 @@ export default function App() {
       <div className="min-h-screen bg-black flex flex-col items-center justify-center">
         <div className="w-16 h-16 border-4 border-[#39FF14]/20 border-t-[#39FF14] rounded-full animate-spin mb-4"></div>
         <div className="text-[#39FF14] font-raj font-bold tracking-[0.5em] animate-pulse uppercase">
-          Initializing Oryn Server
+          Initializing Security
         </div>
       </div>
     )

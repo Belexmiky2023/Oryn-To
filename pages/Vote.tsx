@@ -1,19 +1,20 @@
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Editor, User } from '../types';
 import { db } from '../db';
-import { GOOGLE_CLIENT_ID } from '../constants';
 
 interface VoteProps {
   user: User | null;
-  onLogin: (credential: string) => void;
+  onLogin: (email: string) => Promise<void>;
 }
 
 const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
   const [editors, setEditors] = useState<Editor[]>([]);
   const [votedId, setVotedId] = useState<string | null>(null);
   const [isCasting, setIsCasting] = useState(false);
-  const loginButtonRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
     setEditors(db.getEditors());
@@ -22,28 +23,23 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const google = (window as any).google;
-    
-    if (google && !user && loginButtonRef.current) {
-      google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response: any) => onLogin(response.credential),
-        auto_select: false,
-        use_fedcm_for_prompt: true // Recommended for modern browser privacy requirements
-      });
-
-      google.accounts.id.renderButton(
-        loginButtonRef.current,
-        { 
-          theme: 'filled_black', 
-          size: 'large', 
-          width: 280, 
-          shape: 'pill' 
-        }
-      );
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) {
+      setLoginError('Please enter a valid email address');
+      return;
     }
-  }, [user, onLogin]);
+
+    setIsLoggingIn(true);
+    setLoginError('');
+    try {
+      await onLogin(email);
+    } catch (err) {
+      setLoginError('Failed to send magic link. Please try again.');
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   const handleVote = (editorId: string) => {
     if (!user || votedId || isCasting) return;
@@ -76,7 +72,7 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
       <div className="text-center mb-20 space-y-6">
         <div className="flex justify-center items-center space-x-4 mb-4">
           <div className="h-px w-12 bg-[#39FF14]/30"></div>
-          <span className="text-xs text-[#39FF14] font-bold tracking-[0.4em] uppercase">Voting System Active</span>
+          <span className="text-xs text-[#39FF14] font-bold tracking-[0.4em] uppercase">Secure Voting Active</span>
           <div className="h-px w-12 bg-[#39FF14]/30"></div>
         </div>
         
@@ -85,17 +81,47 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
         </h1>
         
         <p className="text-gray-400 max-w-2xl mx-auto text-lg md:text-xl font-light leading-relaxed">
-          The power is in your hands. Support your favorite motion artist. Remember: <span className="text-white font-bold italic">One vote per account, permanently locked.</span>
+          One vote per secure account. Identity verified via <span className="text-[#39FF14] font-bold">Magic Link</span> technology.
         </p>
         
         {!user && (
-          <div className="flex flex-col items-center pt-10 space-y-6 animate-fade-in">
-            <div 
-              ref={loginButtonRef} 
-              className="glow-pulse rounded-full overflow-hidden border border-[#39FF14]/20"
-            ></div>
-            <p className="text-[10px] text-gray-500 uppercase tracking-[0.5em] font-bold">
-              Secure Google OAuth 2.0 Identity Required
+          <div className="flex flex-col items-center pt-10 animate-fade-in max-w-md mx-auto w-full">
+            <form onSubmit={handleEmailLogin} className="w-full space-y-4">
+              <div className="relative group">
+                <input 
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white focus:border-[#39FF14] focus:outline-none transition-all placeholder:text-gray-600"
+                  disabled={isLoggingIn}
+                />
+                <div className="absolute inset-0 rounded-2xl bg-[#39FF14]/5 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity"></div>
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isLoggingIn}
+                className="w-full neon-button py-4 rounded-2xl font-bold uppercase tracking-[0.2em] text-sm flex items-center justify-center space-x-3"
+              >
+                {isLoggingIn ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-[#39FF14]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Sending Link...</span>
+                  </>
+                ) : (
+                  <span>Send Magic Link</span>
+                )}
+              </button>
+            </form>
+            
+            {loginError && <p className="text-red-500 text-xs mt-4 font-bold uppercase tracking-widest">{loginError}</p>}
+            
+            <p className="text-[10px] text-gray-600 uppercase tracking-[0.5em] font-bold mt-8">
+              No Password Required • Passwordless Security
             </p>
           </div>
         )}
@@ -105,7 +131,7 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
             <img src={user.picture} className="w-8 h-8 rounded-full border border-[#39FF14]/50 mr-4" />
             <div className="text-left">
               <p className="text-[#39FF14] font-raj font-bold text-lg leading-none">
-                Logged in as: <span className="text-white">{user.name}</span>
+                Authenticated: <span className="text-white">{user.name}</span>
               </p>
               <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
                 {votedId ? 'Status: Vote Transmitted & Locked' : 'Status: Ready for Selection'}
