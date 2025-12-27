@@ -1,5 +1,5 @@
 
-export const GOOGLE_CLIENT_ID = '1027735078146-i8dpdphii7pkkpte70rhbcuksb00gonh.apps.googleusercontent.com';
+export const GOOGLE_CLIENT_ID = '59155216254-otj0vd8mqfrta4acmchaptbglcifhhcs.apps.googleusercontent.com';
 
 export const COLORS = {
   neonGreen: '#39FF14',
