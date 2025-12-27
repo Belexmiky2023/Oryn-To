@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useEffect, useState, useRef } from 'react';
 import { Editor, User } from '../types';
 import { db } from '../db';
 import { GOOGLE_CLIENT_ID } from '../constants';
@@ -12,32 +13,43 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
   const [editors, setEditors] = useState<Editor[]>([]);
   const [votedId, setVotedId] = useState<string | null>(null);
   const [isCasting, setIsCasting] = useState(false);
+  const loginButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setEditors(db.getEditors());
     if (user?.votedForId) {
       setVotedId(user.votedForId);
     }
+  }, [user]);
 
+  useEffect(() => {
     const google = (window as any).google;
-    if (google && !user) {
+    
+    if (google && !user && loginButtonRef.current) {
       google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: (response: any) => onLogin(response.credential),
+        auto_select: false,
+        use_fedcm_for_prompt: true // Recommended for modern browser privacy requirements
       });
+
       google.accounts.id.renderButton(
-        document.getElementById('google-login-btn'),
-        { theme: 'filled_black', size: 'large', width: 280, shape: 'pill' }
+        loginButtonRef.current,
+        { 
+          theme: 'filled_black', 
+          size: 'large', 
+          width: 280, 
+          shape: 'pill' 
+        }
       );
     }
-  }, [user]);
+  }, [user, onLogin]);
 
   const handleVote = (editorId: string) => {
     if (!user || votedId || isCasting) return;
 
     setIsCasting(true);
     
-    // Simulate server delay for premium feel
     setTimeout(() => {
       const updatedEditors = editors.map(e => 
         e.id === editorId ? { ...e, votes: e.votes + 1 } : e
@@ -54,10 +66,9 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
       setVotedId(editorId);
       setIsCasting(false);
       
-      // Update persistent session
       const updatedUser = { ...user, votedForId: editorId };
       localStorage.setItem('oryn_current_user', JSON.stringify(updatedUser));
-    }, 1200); // Increased slightly for tension
+    }, 1200);
   };
 
   return (
@@ -79,7 +90,10 @@ const Vote: React.FC<VoteProps> = ({ user, onLogin }) => {
         
         {!user && (
           <div className="flex flex-col items-center pt-10 space-y-6 animate-fade-in">
-            <div id="google-login-btn" className="glow-pulse rounded-full overflow-hidden border border-[#39FF14]/20"></div>
+            <div 
+              ref={loginButtonRef} 
+              className="glow-pulse rounded-full overflow-hidden border border-[#39FF14]/20"
+            ></div>
             <p className="text-[10px] text-gray-500 uppercase tracking-[0.5em] font-bold">
               Secure Google OAuth 2.0 Identity Required
             </p>
