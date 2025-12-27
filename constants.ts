@@ -1,5 +1,6 @@
 
 export const MAGIC_PUBLISHABLE_KEY = 'pk_live_15DF34DF13B4B960';
+export const GITHUB_CLIENT_ID = 'Ov23li0p73NXvUGvyU1Z';
 
 export const COLORS = {
   neonGreen: '#39FF14',
@@ -26,13 +27,13 @@ export const getTargetDate = (): number => {
   if (typeof window === 'undefined') return Date.now() + FOUR_DAYS_MS;
   
   try {
-    const stored = localStorage.getItem('oryn_target_date_v2');
+    const stored = localStorage.getItem('oryn_target_date_v3');
     if (stored) {
       const parsed = parseInt(stored, 10);
       return isNaN(parsed) ? (Date.now() + FOUR_DAYS_MS) : parsed;
     }
     const target = Date.now() + FOUR_DAYS_MS;
-    localStorage.setItem('oryn_target_date_v2', target.toString());
+    localStorage.setItem('oryn_target_date_v3', target.toString());
     return target;
   } catch (error) {
     return Date.now() + FOUR_DAYS_MS;
