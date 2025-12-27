@@ -26,14 +26,15 @@ export default function App() {
       try {
         const isLoggedIn = await magic.user.isLoggedIn();
         if (isLoggedIn) {
-          const metadata = await magic.user.getMetadata();
-          const email = metadata.email!;
+          // Fix: Replace getMetadata() with getInfo() for modern Magic SDK support
+          const userInfo = await magic.user.getInfo();
+          const email = userInfo.email!;
           const existingUsers = db.getUsers();
           let foundUser = existingUsers.find(u => u.email === email);
 
           if (!foundUser) {
             foundUser = {
-              id: metadata.publicAddress!,
+              id: userInfo.publicAddress!,
               email: email,
               name: email.split('@')[0], // Use email prefix as name
               picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`, // Deterministic avatar
@@ -60,15 +61,16 @@ export default function App() {
   const handleLogin = async (email: string) => {
     try {
       await magic.auth.loginWithMagicLink({ email });
-      const metadata = await magic.user.getMetadata();
-      const userEmail = metadata.email!;
+      // Fix: Replace getMetadata() with getInfo() for modern Magic SDK support
+      const userInfo = await magic.user.getInfo();
+      const userEmail = userInfo.email!;
       
       const existingUsers = db.getUsers();
       let foundUser = existingUsers.find(u => u.email === userEmail);
 
       if (!foundUser) {
         foundUser = {
-          id: metadata.publicAddress!,
+          id: userInfo.publicAddress!,
           email: userEmail,
           name: userEmail.split('@')[0],
           picture: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail}`,

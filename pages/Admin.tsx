@@ -260,13 +260,6 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
                     </td>
                   </tr>
                 ))}
-                {txs.length === 0 && (
-                  <tr>
-                    <td colSpan={4} className="px-8 py-20 text-center text-gray-600 uppercase tracking-widest font-bold text-sm italic">
-                      No transactions detected in current session
-                    </td>
-                  </tr>
-                )}
               </tbody>
             </table>
           </div>
@@ -302,7 +295,7 @@ const Admin: React.FC<AdminProps> = ({ user }) => {
                   <div key={i} className="text-xs text-gray-500 bg-white/5 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-all flex justify-between items-center">
                     <div>
                       <span className="text-white font-bold">{u.email}</span>
-                      <span className="ml-2">initiated secure handshake via Google OAuth 2.0.</span>
+                      <span className="ml-2">initiated secure handshake via Magic Link Auth.</span>
                     </div>
                     <span className="font-mono text-[10px] bg-black/50 px-2 py-1 rounded text-gray-600">{new Date(u.createdAt).toLocaleTimeString()}</span>
                   </div>

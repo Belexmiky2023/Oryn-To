@@ -1,5 +1,5 @@
 
-export const MAGIC_PUBLISHABLE_KEY = 'pk_live_D4990A2E8056087E'; // Replace with your actual key from Magic Dashboard
+export const MAGIC_PUBLISHABLE_KEY = 'pk_live_15DF34DF13B4B960';
 
 export const COLORS = {
   neonGreen: '#39FF14',

@@ -177,7 +177,7 @@ const Home: React.FC = () => {
             <div className="space-y-6">
               <div className="space-y-2">
                 <h4 className="text-[#39FF14] font-bold uppercase tracking-widest text-sm">01. Identity Verification</h4>
-                <p className="text-gray-400">All voters must authenticate via Google. Only unique, non-suspicious accounts are eligible for voting power.</p>
+                <p className="text-gray-400">All voters must authenticate via Magic Link. Only unique, non-suspicious email identities are eligible for voting power.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="text-[#39FF14] font-bold uppercase tracking-widest text-sm">02. Permanent Lock</h4>
